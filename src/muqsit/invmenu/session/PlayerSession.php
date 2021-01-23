@@ -46,9 +46,9 @@ class PlayerSession{
 	/** @var int */
 	protected $current_window_id = ContainerIds::NONE;
 
-	public function __construct(Player $player){
+	public function __construct(Player $player, PlayerNetwork $network){
 		$this->player = $player;
-		$this->network = new PlayerNetwork($player);
+		$this->network = $network;
 		$this->menu_extradata = new MenuExtradata();
 	}
 
@@ -102,7 +102,7 @@ class PlayerSession{
 		$this->current_menu = $menu;
 
 		if($this->current_menu !== null){
-			$this->network->wait(function(bool $success) use($callback) : void{
+			$this->network->waitUntil($this->network->getGraphicWaitDuration(), function(bool $success) use($callback) : void{
 				if($this->current_menu !== null){
 					if($success && $this->sendWindow()){
 						if($callback !== null){

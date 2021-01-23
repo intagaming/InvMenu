@@ -128,13 +128,19 @@ class InvMenu implements MenuIds{
 
 		$session->removeWindow();
 
-		$network->wait(function(bool $success) use($player, $session, $name, $callback) : void{
+		$network->waitUntil($network->getGraphicWaitDuration(), function(bool $success) use($player, $session, $name, $callback) : void{
 			if($success){
 				$extra_data = $session->getMenuExtradata();
 				$extra_data->setName($name ?? $this->getName());
 				$extra_data->setPosition($this->type->calculateGraphicPosition($player));
-				$this->type->sendGraphic($player, $extra_data);
-				$session->setCurrentMenu($this, $callback);
+				if($this->type->sendGraphic($player, $extra_data)){
+					$session->setCurrentMenu($this, $callback);
+				}else{
+					$extra_data->reset();
+					if($callback !== null){
+						$callback(false);
+					}
+				}
 			}elseif($callback !== null){
 				$callback(false);
 			}
