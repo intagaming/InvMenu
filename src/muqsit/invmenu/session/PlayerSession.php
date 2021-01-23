@@ -129,6 +129,20 @@ class PlayerSession{
 		return $this->current_menu;
 	}
 
+    /**
+     * This function is used in placement of @see Player::removeWindow(),
+     * which will render you unable to open your inventory (and more).
+     * @return bool
+     */
+    public function removeGraphic(): bool
+    {
+        if($this->current_menu !== null){
+            $this->current_menu->getType()->removeGraphic($this->player, $this->menu_extradata);
+            return true;
+        }
+        return false;
+	}
+
 	/**
 	 * @internal use Player::removeWindow() instead
 	 * @return bool
